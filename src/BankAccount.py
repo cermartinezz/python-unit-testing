@@ -28,8 +28,10 @@ class BankAccount:
         if 0 < amount <= self.balance:
             self.balance -= amount
             account.deposit(amount)
+            self.log_transaction(f"new Transfer of {amount} succeeded")
             return self.balance
 
+        self.log_transaction(f"new Transfer of {amount}")
         raise ValueError("Invalid transfer amount")
 
     def log_transaction(self, message):

@@ -37,11 +37,13 @@ class BankAccountTests(TestCase):
         self.account.transfer(account2, 500)
         assert self.account.get_balance() == 500
         assert account2.get_balance() == 1000
+        assert self.count_lines(self.account.log_file) == 2
 
     def test_transfer_fail(self):
         with self.assertRaises(ValueError):
             account2 = BankAccount(500)
             self.account.transfer(account2, 2000)
+        assert self.count_lines(self.account.log_file) == 2
 
     def test_log_transaction(self):
         self.account.deposit(1000)
