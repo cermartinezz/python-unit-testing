@@ -1,3 +1,8 @@
+from datetime import datetime
+
+from src.exceptions import OutOfScheduleError
+
+
 class BankAccount:
 
     def __init__(self, balance=0, log_file=None):
@@ -14,6 +19,12 @@ class BankAccount:
         raise ValueError("Invalid deposit amount")
 
     def withdraw(self, amount):
+        now = datetime.now()
+        if now.weekday() > 4:
+            raise OutOfScheduleError()
+        if now.hour < 8 or now.hour > 17:
+            raise OutOfScheduleError()
+
         if 0 < amount <= self.balance:
             self.balance -= amount
             self.log_transaction(f"Withdrew {amount}, new balance is {self.balance}")

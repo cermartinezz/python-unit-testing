@@ -1,7 +1,9 @@
 import os
 from unittest import TestCase
+from unittest.mock import patch
 
 from src.BankAccount import BankAccount
+from src.exceptions import OutOfScheduleError
 
 
 class BankAccountTests(TestCase):
@@ -54,3 +56,38 @@ class BankAccountTests(TestCase):
         assert self.count_lines(self.account.log_file) == 1
         self.account.deposit(1000)
         assert self.count_lines(self.account.log_file) == 2
+
+    @patch("src.BankAccount.datetime")
+    def test_withdraw_during_business_hours(self, mock_datetime):
+        mock_datetime.now.return_value.hour = 10
+        mock_datetime.now.return_value.weekday.return_value = 0
+        new_balance = self.account.withdraw(100)
+        self.assertEqual(new_balance, 900)
+
+    @patch("src.BankAccount.datetime")
+    def test_withdraw_before_business_hours(self, mock_datetime):
+        mock_datetime.now.return_value.hour = 7
+        mock_datetime.now.return_value.weekday.return_value = 0
+        with self.assertRaises(OutOfScheduleError):
+            self.account.withdraw(1000)
+
+    @patch("src.BankAccount.datetime")
+    def test_withdraw_after_business_hours(self, mock_datetime):
+        mock_datetime.now.return_value.hour = 18
+        mock_datetime.now.return_value.weekday.return_value = 0
+        with self.assertRaises(OutOfScheduleError):
+            self.account.withdraw(1000)
+
+    @patch("src.BankAccount.datetime")
+    def test_withdraw_on_business_days_(self, mock_datetime):
+        mock_datetime.now.return_value.hour = 9
+        mock_datetime.now.return_value.weekday.return_value = 0
+        new_balance = self.account.withdraw(100)
+        self.assertEqual(new_balance, 900)
+
+    @patch("src.BankAccount.datetime")
+    def test_withdraw_off_business_days_fails(self, mock_datetime):
+        mock_datetime.now.return_value.hour = 9
+        mock_datetime.now.return_value.weekday.return_value = 6
+        with self.assertRaises(OutOfScheduleError):
+            self.account.withdraw(1000)
