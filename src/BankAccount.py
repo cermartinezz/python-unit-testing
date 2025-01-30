@@ -20,9 +20,8 @@ class BankAccount:
 
     def withdraw(self, amount):
         now = datetime.now()
-        if now.weekday() > 4:
-            raise OutOfScheduleError()
-        if now.hour < 8 or now.hour > 17:
+
+        if now.weekday() > 4 or not (8 <= now.hour <= 17):
             raise OutOfScheduleError()
 
         if 0 < amount <= self.balance:

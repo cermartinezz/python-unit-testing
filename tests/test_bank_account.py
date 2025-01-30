@@ -91,3 +91,16 @@ class BankAccountTests(TestCase):
         mock_datetime.now.return_value.weekday.return_value = 6
         with self.assertRaises(OutOfScheduleError):
             self.account.withdraw(1000)
+
+    def test_deposit_several_amounts(self):
+        test_cases = [
+            {"amount": 100, "expected": 1100},
+            {"amount": 400, "expected": 1400},
+            {"amount": 1000, "expected": 2000},
+        ]
+
+        for case in test_cases:
+            with self.subTest(case=case):
+                self.account = BankAccount(1000, log_file="transactions.txt")
+                new_balance = self.account.deposit(case.get("amount"))
+                self.assertEqual(new_balance, case.get("expected"))
