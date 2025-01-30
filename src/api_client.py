@@ -14,7 +14,3 @@ def get_location(ip):
         "city": data["cityName"],
         "region": data["regionName"],
     }
-
-
-if __name__ == "__main__":
-    print(get_location("8.8.8.8"))

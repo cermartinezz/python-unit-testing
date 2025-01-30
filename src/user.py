@@ -9,6 +9,3 @@ class User:
 
     def get_total_balance(self):
         return sum(account.get_balance() for account in self.accounts)
-
-    def __str__(self):
-        return f"User {self.name} with email {self.email}"

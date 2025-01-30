@@ -58,6 +58,13 @@ class BankAccountTests(TestCase):
         assert self.count_lines(self.account.log_file) == 2
 
     @patch("src.BankAccount.datetime")
+    def test_withdraw_deposit_with_negative_amount(self, mock_datetime):
+        mock_datetime.now.return_value.hour = 10
+        mock_datetime.now.return_value.weekday.return_value = 0
+        with self.assertRaises(ValueError):
+            self.account.deposit(-100)
+
+    @patch("src.BankAccount.datetime")
     def test_withdraw_during_business_hours(self, mock_datetime):
         mock_datetime.now.return_value.hour = 10
         mock_datetime.now.return_value.weekday.return_value = 0
